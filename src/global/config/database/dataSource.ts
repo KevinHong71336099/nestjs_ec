@@ -7,8 +7,8 @@ const env = process.env.NODE_ENV || 'development';
 
 const baseConfig: Partial<DataSourceOptions> = {
   type: 'postgres',
-  entities: ['src/**/**/*.entity{.ts,.js}'],
-  migrations: ['src/migrations/*{.ts,.js}'],
+  entities: ['dist/**/**/*.entity{.ts,.js}'],
+  migrations: ['dist/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations_typeorm',
   migrationsRun: true,
 };
@@ -40,7 +40,7 @@ const envConfig: { [key: string]: Partial<DataSourceOptions> } = {
   },
 };
 
-const dataSourceOptions: DataSourceOptions = {
+const dataSourceOptions = {
   ...baseConfig,
   ...envConfig[env],
 } as DataSourceOptions;
