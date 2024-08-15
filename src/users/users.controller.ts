@@ -7,12 +7,11 @@ import {
   Delete,
   Query,
   ParseUUIDPipe,
-  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserQueryDto } from './dto/find-user-query';
-import { CreateUserDto } from './dto/create-user.dto';
+
 import { User } from './entities/user.entity';
 
 @Controller('users')
