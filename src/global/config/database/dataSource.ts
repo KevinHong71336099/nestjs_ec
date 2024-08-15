@@ -1,4 +1,5 @@
 import { DataSourceOptions } from 'typeorm';
+import { SeederOptions } from 'typeorm-extension';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,32 +14,35 @@ const baseConfig: Partial<DataSourceOptions> = {
   migrationsRun: true,
 };
 
-const envConfig: { [key: string]: Partial<DataSourceOptions> } = {
-  test: {
-    host: process.env.HOST || 'localhost',
-    port: parseInt(process.env.PORT || '5432', 10),
-    username: 'postgres',
-    password: 'root',
-    database: 'testing',
-    synchronize: true,
-  },
-  development: {
-    host: process.env.HOST || 'localhost',
-    port: parseInt(process.env.PORT || '5432', 10),
-    username: 'postgres',
-    password: 'root',
-    database: 'development',
-    synchronize: false,
-  },
-  production: {
-    host: process.env.HOST,
-    port: parseInt(process.env.PORT || '5432', 10),
-    username: 'postgres',
-    password: 'root',
-    database: 'production',
-    synchronize: false,
-  },
-};
+const envConfig: { [key: string]: Partial<DataSourceOptions> & SeederOptions } =
+  {
+    test: {
+      host: process.env.HOST || 'localhost',
+      port: parseInt(process.env.PORT || '5432', 10),
+      username: 'postgres',
+      password: 'root',
+      database: 'testing',
+      synchronize: true,
+    },
+    development: {
+      host: process.env.HOST || 'localhost',
+      port: parseInt(process.env.PORT || '5432', 10),
+      username: 'postgres',
+      password: 'root',
+      database: 'development',
+      synchronize: false,
+      seeds: ['dist/database/seeds/**/*{.ts,.js}'],
+      factories: ['dist/database/factories/**/*{.ts,.js}'],
+    },
+    production: {
+      host: process.env.HOST,
+      port: parseInt(process.env.PORT || '5432', 10),
+      username: 'postgres',
+      password: 'root',
+      database: 'production',
+      synchronize: false,
+    },
+  };
 
 const dataSourceOptions = {
   ...baseConfig,
