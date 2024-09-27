@@ -1,10 +1,11 @@
 import { DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-dotenv.config();
-
-const env = process.env.NODE_ENV || 'development';
+dotenv.config({
+  path: path.resolve(process.cwd(), `env/.env.${process.env.NODE_ENV}`),
+});
 
 const baseConfig: Partial<DataSourceOptions> = {
   type: 'postgres',
@@ -14,39 +15,26 @@ const baseConfig: Partial<DataSourceOptions> = {
   migrationsRun: true,
 };
 
-const envConfig: { [key: string]: Partial<DataSourceOptions> & SeederOptions } =
-  {
-    test: {
-      host: process.env.HOST || 'localhost',
-      port: parseInt(process.env.PORT || '5432', 10),
-      username: 'postgres',
-      password: 'root',
-      database: 'testing',
-      synchronize: true,
-    },
-    development: {
-      host: process.env.HOST || 'localhost',
-      port: parseInt(process.env.PORT || '5432', 10),
-      username: 'postgres',
-      password: 'root',
-      database: 'development',
-      synchronize: false,
-      seeds: ['dist/database/seeds/**/*{.ts,.js}'],
-      factories: ['dist/database/factories/**/*{.ts,.js}'],
-    },
-    production: {
-      host: process.env.HOST,
-      port: parseInt(process.env.PORT || '5432', 10),
-      username: 'postgres',
-      password: 'root',
-      database: 'production',
-      synchronize: false,
-    },
-  };
+const envConfig: Partial<DataSourceOptions> & SeederOptions = {
+  host: process.env.HOST || 'localhost',
+  port: parseInt(process.env.PROGRES_PORT || '5432', 10),
+  username: process.env.PROGRES_USERNAME || 'postgres',
+  password: process.env.PROGRES_PASSWORD || 'root',
+  database: process.env.NODE_ENV,
+  synchronize: process.env.NODE_ENV === 'development' ? true : false,
+  seeds:
+    process.env.NODE_ENV !== 'production'
+      ? ['dist/database/seeds/**/*{.ts,.js}']
+      : [],
+  factories:
+    process.env.NODE_ENV !== 'production'
+      ? ['dist/database/factories/**/*{.ts,.js}']
+      : [],
+};
 
 const dataSourceOptions = {
   ...baseConfig,
-  ...envConfig[env],
+  ...envConfig,
 } as DataSourceOptions;
 
 export default dataSourceOptions;
